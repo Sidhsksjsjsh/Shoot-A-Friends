@@ -102,6 +102,18 @@ T1:AddToggle({
   end    
 })
 
+T1:AddToggle({
+  Name = "Auto Spin",
+  Default = false,
+  Callback = function(Value)
+    _G.spin = Value
+      while wait() do
+        if _G.spin == false then break end
+          game:GetService("ReplicatedStorage")["Remotes"]["ReplicateGui"]:FireServer("ActivateSpin")
+      end
+  end    
+})
+
 T2:AddDropdown({
   Name = "Select Level",
   Default = LevelHandle[1],
@@ -119,7 +131,9 @@ T2:AddToggle({
       while wait() do
         if _G.s == false then break end
           child(game:GetService("Workspace").Levels[_G.AsyncLevel],function(index,variable)
-              game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(Vector3.new(0,0,0),variable)
+            child(variable,function(index2,variable2)
+              game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(variable2.Position,variable)
+            end)
           end)
       end
   end    
