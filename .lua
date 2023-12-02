@@ -4,6 +4,7 @@ local Window = OrionLib:MakeWindow({Name = "VIP Turtle Hub V3", HidePremium = fa
 local EggHandle = {}
 local LevelHandle = {}
 local EnemyHandle = {}
+local DummyHandle = {}
 
 --game:GetService("Workspace").Levels.Level1.Level1Wall7.LVL
 --game:GetService("Workspace").Eggs["Forest Egg"].HitBox
@@ -15,7 +16,12 @@ local function HandleGeneratedEnemyFolder(str)
     OrionLib:AddTable(game:GetService("Workspace").Levels[str],EnemyHandle)
 end
 
+local function HandleGeneratedDummyFolder(str)
+    OrionLib:AddTable(game:GetService("Workspace").Targets[str],DummyHandle)
+end
+
 HandleGeneratedEnemyFolder(LevelHandle[1])
+HandleGeneratedDummyFolder(LevelHandle[1])
 
 local function child(str,func)
 for i,v in pairs(str:GetChildren()) do
@@ -30,7 +36,7 @@ PremiumOnly = false
 })
 
 local T2 = Window:MakeTab({
-Name = "Shoot",
+Name = "Shoot & Train",
 Icon = "rbxassetid://",
 PremiumOnly = false
 })
@@ -139,13 +145,14 @@ local ESelector = T2:AddDropdown({
   end    
 })
 
---[[child(game:GetService("Workspace").Levels[_G.AsyncLevel],function(index,variable)
-            child(variable,function(index2,variable2)
-                if variable2.Name == "LVL" then
-                    game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(variable2.Position,variable.Name)
-                end
-            end)
-         end)]]
+local DSelector = T2:AddDropdown({
+  Name = "Select Dummy [ Train ]",
+  Default = DummyHandle[1],
+  Options = DummyHandle,
+  Callback = function(Value)
+    _G.AsyncDummy = Value
+  end    
+})
 
 T2:AddToggle({
   Name = "Auto Shoot",
@@ -164,17 +171,41 @@ T2:AddToggle({
       end
   end    
 })
+--game:GetService("Workspace").Targets.Level3.Target3_4.MeshPart
+T2:AddToggle({
+  Name = "Auto Train",
+  Default = false,
+  Callback = function(Value)
+    _G.train = Value
+      while wait() do
+        if _G.train == false then break end
+          child(game:GetService("Workspace").Targets[_G.AsyncLevel],function(index,variable)
+            child(variable,function(index2,variable2)
+                if variable2.Name == "MeshPart" then
+                    game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(variable2.Position,_G.AsyncDummy)
+                end
+            end)
+         end)
+      end
+  end    
+})
 
 T2:AddButton({
-  Name = "Refresh Enemy Selection",
+  Name = "Refresh Enemy & Dummy Selection",
   Callback = function()
       EnemyHandle = {}
+      DummyHandle = {}
       ESelector:Refresh({"Refreshing.."},true)
       ESelector:Set("Refreshing..")
+      DSelector:Refresh({"Refreshing.."},true)
+      DSelector:Set("Refreshing..")
       wait(0.1)
       HandleGeneratedEnemyFolder(_G.AsyncLevel)
+      HandleGeneratedDummyFolder(_G.AsyncLevel)
       wait(0.1)
       ESelector:Refresh(EnemyHandle,true)
       ESelector:Set(EnemyHandle[1])
+      DSelector:Refresh(DummyHandle,true)
+      DSelector:Set(DummyHandle[1])
   end    
 })
