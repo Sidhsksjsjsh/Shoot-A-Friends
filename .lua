@@ -170,6 +170,7 @@ T2:AddButton({
   Callback = function()
       EnemyHandle = {}
       ESelector:Refresh({"Refreshing.."},true)
+      ESelector:Set("Refreshing..")
       wait(0.1)
       HandleGeneratedEnemyFolder(_G.AsyncLevel)
       wait(0.1)
