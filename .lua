@@ -133,7 +133,7 @@ T2:AddToggle({
           child(game:GetService("Workspace").Levels[_G.AsyncLevel],function(index,variable)
             child(variable,function(index2,variable2)
                 if variable2.Name == "LVL" then
-                    game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(variable2.Position,variable)
+                    game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(variable2.Position,variable.Name)
                 end
             end)
          end)
