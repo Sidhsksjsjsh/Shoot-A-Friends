@@ -3,12 +3,18 @@ local Window = OrionLib:MakeWindow({Name = "VIP Turtle Hub V3", HidePremium = fa
 
 local EggHandle = {}
 local LevelHandle = {}
-
+local EnemyHandle = {}
 --game:GetService("Workspace").Levels.Level1.Level1Wall7.LVL
 --game:GetService("Workspace").Eggs["Forest Egg"].HitBox
 
 OrionLib:AddTable(game:GetService("Workspace").Eggs,EggHandle)
 OrionLib:AddTable(game:GetService("Workspace").Levels,LevelHandle)
+
+local function HandleGeneratedEnemyFolder(str)
+    OrionLib:AddTable(game:GetService("Workspace").Levels[str],EnemyHandle)
+end
+
+HandleGeneratedEnemyFolder(LevelHandle[1])
 
 local function child(str,func)
 for i,v in pairs(str:GetChildren()) do
