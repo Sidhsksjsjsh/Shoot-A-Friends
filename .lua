@@ -4,6 +4,7 @@ local Window = OrionLib:MakeWindow({Name = "VIP Turtle Hub V3", HidePremium = fa
 local EggHandle = {}
 local LevelHandle = {}
 local EnemyHandle = {}
+
 --game:GetService("Workspace").Levels.Level1.Level1Wall7.LVL
 --game:GetService("Workspace").Eggs["Forest Egg"].HitBox
 
@@ -129,6 +130,23 @@ T2:AddDropdown({
   end    
 })
 
+local ESelector = T2:AddDropdown({
+  Name = "Select Enemy",
+  Default = EnemyHandle[1],
+  Options = EnemyHandle,
+  Callback = function(Value)
+    _G.AsyncEnemy = Value
+  end    
+})
+
+--[[child(game:GetService("Workspace").Levels[_G.AsyncLevel],function(index,variable)
+            child(variable,function(index2,variable2)
+                if variable2.Name == "LVL" then
+                    game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(variable2.Position,variable.Name)
+                end
+            end)
+         end)]]
+
 T2:AddToggle({
   Name = "Auto Shoot",
   Default = false,
@@ -139,10 +157,23 @@ T2:AddToggle({
           child(game:GetService("Workspace").Levels[_G.AsyncLevel],function(index,variable)
             child(variable,function(index2,variable2)
                 if variable2.Name == "LVL" then
-                    game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(variable2.Position,variable.Name)
+                    game:GetService("ReplicatedStorage")["Remotes"]["Fire"]:FireServer(variable2.Position,_G.AsyncEnemy)
                 end
             end)
          end)
       end
+  end    
+})
+
+T2:AddButton({
+  Name = "Refresh Enemy Selection",
+  Callback = function()
+      EnemyHandle = {}
+      ESelector:Refresh({"Refreshing.."},true)
+      wait(0.1)
+      HandleGeneratedEnemyFolder(_G.AsyncLevel)
+      wait(0.1)
+      ESelector:Refresh(EnemyHandle,true)
+      ESelector:Set(EnemyHandle[1])
   end    
 })
